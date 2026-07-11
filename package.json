@@ -113,7 +113,8 @@
   "homepage": "https://github.com/pkg-nec/http-server#readme",
   "license": "MIT",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "preferGlobal": true,
   "bin": {
