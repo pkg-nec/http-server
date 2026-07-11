@@ -4,7 +4,7 @@
 
 ## :bug: I Found a Bug
 
-Sorry! It happens to the best of us. If you've found a bug in http-server, **please [search](https://github.com/http-party/http-server/issues/) to see if it's already been reported**. Otherwise, create a [new issue](https://github.com/http-party/http-server/issues/new). If you can fix the bug yourself, feel free to create a [pull request](#propose-a-change) thereafter.
+Sorry! It happens to the best of us. If you've found a bug in http-server, **please [search](https://github.com/pkg-nec/http-server/issues/) to see if it's already been reported**. Otherwise, create a [new issue](https://github.com/pkg-nec/http-server/issues/new). If you can fix the bug yourself, feel free to create a [pull request](#propose-a-change) thereafter.
 
 Please include _as much detail as possible_ to help us reproduce and diagnose the bug. Most importantly:
 
@@ -17,7 +17,7 @@ If we need more information from you, we'll let you know. If you don't within a 
 
 ## :exclamation: Propose a Change
 
-Before you get your hands dirty, please [search](https://github.com/http-party/http-server/issues/) for a related issue, or [create a new one](https://github.com/http-party/http-server/issues/new). If you wish to contribute a new feature, this is doubly important! Let's discuss your proposed changes first; we don't want you to waste time implementing a change that is at odds with the project's direction. That said, we'll happily consider any contribution, no matter how great or small.
+Before you get your hands dirty, please [search](https://github.com/pkg-nec/http-server/issues/) for a related issue, or [create a new one](https://github.com/pkg-nec/http-server/issues/new). If you wish to contribute a new feature, this is doubly important! Let's discuss your proposed changes first; we don't want you to waste time implementing a change that is at odds with the project's direction. That said, we'll happily consider any contribution, no matter how great or small.
 
 ### :shoe: Contributing Code: Step-by-Step
 
@@ -38,7 +38,7 @@ Follow these steps to get going.
    - See [How to Write a Git Commit Message](https://chris.beams.io/posts/git-commit/).
    - **Please do not use "Conventional Commits" style**
 1. Push your changes to your fork.
-1. Now on [http-party/http-server](https://github.com/http-party/http-server), you should see a notification about your recent changes in your fork's branch, with a green button to create a pull request. Click the button.
+1. Now on [pkg-nec/http-server](https://github.com/pkg-nec/http-server), you should see a notification about your recent changes in your fork's branch, with a green button to create a pull request. Click the button.
 1. Describe your changes in detail here, following the template. Once you're satisfied, submit the form.
 1. Be patient while your PR is reviewed. This can take a while. We may request changes, but don't be afraid to question them.
 1. Your PR might become conflicted with the code in `master`. If this is the case, you will need to [update your PR](#up-to-date) and resolve your conflicts.
@@ -49,5 +49,5 @@ Follow these steps to get going.
 
 _Excellent._ Here's how:
 
-- **Handy with JavaScript?** Please check out the issues labeled [`help-wanted`](https://github.com/http-party/http-server/issues?q=is%3Aopen+is%3Aissue+label%3A%22help-wanted%22) or [`good first issue`](https://github.com/http-party/http-server/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3Agood+first+issue). 
+- **Handy with JavaScript?** Please check out the issues labeled [`help-wanted`](https://github.com/pkg-nec/http-server/issues?q=is%3Aopen+is%3Aissue+label%3A%22help-wanted%22) or [`good first issue`](https://github.com/pkg-nec/http-server/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3Agood+first+issue). 
 - **Wait--you write unit tests for _fun_?** A PR which increases coverage is unlikely to ever be turned down.
