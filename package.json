@@ -114,8 +114,7 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public",
-    "provenance": true,
-    "tag": "canary"
+    "provenance": true
   },
   "preferGlobal": true,
   "bin": {
