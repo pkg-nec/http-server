@@ -25,6 +25,13 @@ jobs:
           node-version: 22.x
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Pin npm to a version with OIDC trusted publishing support
+        # Node 22.x ships with npm 10.9.x, which has provenance signing but
+        # NOT the OIDC token exchange with npm's registry required for
+        # trusted publishing (added in npm 11.5.1). Pin an exact minor to
+        # keep the publish path deterministic across runs.
+        run: npm install -g npm@11.10.0
+
       - name: Install dependencies (honor lockfile)
         run: npm ci
 
