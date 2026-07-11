@@ -175,13 +175,13 @@ Expected: `ok`.
 - [ ] **Step 3: Verify critical fields are present**
 
 ```bash
-grep -E "^\s*id-token: write\s*$" .github/workflows/publish.yml
-grep -E "^\s*environment: npm-publish\s*$" .github/workflows/publish.yml
-grep -E "^\s*ref: \\\$\\{\\{ github\\.event\\.release\\.tag_name \\}\\}\s*$" .github/workflows/publish.yml
-grep -E "npm publish --provenance" .github/workflows/publish.yml
+grep -E "^\s*id-token: write(\s|$|#)" .github/workflows/publish.yml
+grep -E "^\s*environment: npm-publish(\s|$|#)" .github/workflows/publish.yml
+grep -F 'ref: ${{ github.event.release.tag_name }}' .github/workflows/publish.yml
+grep -F 'npm publish --provenance' .github/workflows/publish.yml
 ```
 
-Each grep must return exactly one line. If any returns zero lines, the workflow file is missing a critical setting — do not proceed.
+Each grep must return at least one line. The `id-token` and `environment` lines carry trailing inline comments (`# ...`); the character class after each token accepts a trailing comment or end-of-line. The `ref:` and `npm publish` lines use `grep -F` (fixed-string) so they don't need escaping of `${{ ... }}`. If any grep returns zero lines, the workflow file is missing a critical setting — do not proceed.
 
 - [ ] **Step 4: Verify workflow does NOT reference any secret**
 
