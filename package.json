@@ -103,7 +103,7 @@
     "eol": "^0.10.0",
     "eslint": "^4.19.1",
     "eslint-config-populist": "^4.2.0",
-    "express": "^4.17.1",
+    "express": "^4.22.2",
     "request": "^2.88.2",
     "tap": "^14.11.0"
   },
