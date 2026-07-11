@@ -1,12 +1,14 @@
-[![GitHub Workflow Status (master)](https://img.shields.io/github/workflow/status/http-party/http-server/Node.js%20CI/master?style=flat-square)](https://github.com/http-party/http-server/actions)
-[![npm](https://img.shields.io/npm/v/http-server.svg?style=flat-square)](https://www.npmjs.com/package/http-server) [![homebrew](https://img.shields.io/homebrew/v/http-server?style=flat-square)](https://formulae.brew.sh/formula/http-server) [![npm downloads](https://img.shields.io/npm/dm/http-server?color=blue&label=npm%20downloads&style=flat-square)](https://www.npmjs.com/package/http-server)
-[![license](https://img.shields.io/github/license/http-party/http-server.svg?style=flat-square)](https://github.com/http-party/http-server)
+[![GitHub Workflow Status (trunk)](https://img.shields.io/github/actions/workflow/status/pkg-nec/http-server/node.js.yml?branch=trunk&style=flat-square)](https://github.com/pkg-nec/http-server/actions)
+[![npm](https://img.shields.io/npm/v/@pkg-nec/http-server.svg?style=flat-square)](https://www.npmjs.com/package/@pkg-nec/http-server) [![npm downloads](https://img.shields.io/npm/dm/@pkg-nec/http-server?color=blue&label=npm%20downloads&style=flat-square)](https://www.npmjs.com/package/@pkg-nec/http-server)
+[![license](https://img.shields.io/github/license/pkg-nec/http-server.svg?style=flat-square)](https://github.com/pkg-nec/http-server)
+
+> **Maintained fork.** This is `@pkg-nec/http-server`, a maintained fork of [`http-party/http-server`](https://github.com/http-party/http-server), which has been effectively unmaintained since early 2022. This fork ships vulnerability patches only — no new features. Report issues at [pkg-nec/http-server/issues](https://github.com/pkg-nec/http-server/issues).
 
 # http-server: a simple static HTTP server
 
 `http-server` is a simple, zero-configuration command-line static HTTP server.  It is powerful enough for production usage, but it's simple and hackable enough to be used for testing, local development and learning.
 
-![Example of running http-server](https://github.com/http-party/http-server/raw/master/screenshots/public.png)
+![Example of running http-server](https://github.com/pkg-nec/http-server/raw/trunk/screenshots/public.png)
 
 ## Installation:
 
@@ -14,21 +16,17 @@
 
 Using `npx` you can run the script without installing it first:
 
-    npx http-server [path] [options]
+    npx @pkg-nec/http-server [path] [options]
 
 #### Globally via `npm`
 
-    npm install --global http-server
+    npm install --global @pkg-nec/http-server
 
 This will install `http-server` globally so that it may be run from the command line anywhere.
 
-#### Globally via Homebrew
-
-    brew install http-server
-     
 #### As a dependency in your `npm` package:
 
-    npm install http-server
+    npm install @pkg-nec/http-server
 
 ## Usage:
 
