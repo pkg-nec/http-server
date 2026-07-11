@@ -1,11 +1,11 @@
 {
-  "name": "http-server",
-  "version": "14.1.1",
+  "name": "@pkg-nec/http-server",
+  "version": "14.1.1-pkgnec.0",
   "description": "A simple zero-configuration command-line http server",
   "main": "./lib/http-server",
   "repository": {
     "type": "git",
-    "url": "git://github.com/http-party/http-server.git"
+    "url": "git+https://github.com/pkg-nec/http-server.git"
   },
   "keywords": [
     "cli",
@@ -108,9 +108,13 @@
     "tap": "^14.11.0"
   },
   "bugs": {
-    "url": "https://github.com/http-party/http-server/issues"
+    "url": "https://github.com/pkg-nec/http-server/issues"
   },
+  "homepage": "https://github.com/pkg-nec/http-server#readme",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "preferGlobal": true,
   "bin": {
     "http-server": "./bin/http-server"
