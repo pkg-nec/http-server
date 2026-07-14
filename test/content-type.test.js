@@ -59,7 +59,9 @@ test('charset arabic', (t) => {
   );
 
   checkHeaders(t, server, 'charset/arabic.html', (t, headers) => {
-    t.equal(headers['content-type'], 'text/html; charset=ISO-8859-6');
+    // html-encoding-sniffer@5 returns normalized labels in lower-case for some encodings
+    // compare the header value lower-cased to avoid brittle casing expectations
+    t.equal(headers['content-type'].toLowerCase(), 'text/html; charset=iso-8859-6');
   });
 });
 
@@ -71,6 +73,6 @@ test('charset Shift_JIS', (t) => {
   );
 
   checkHeaders(t, server, 'charset/shift_jis.html', (t, headers) => {
-    t.equal(headers['content-type'], 'text/html; charset=Shift_JIS');
+    t.equal(headers['content-type'].toLowerCase(), 'text/html; charset=shift_jis');
   });
 });
