@@ -102,7 +102,6 @@
   "devDependencies": {
     "eol": "^0.10.0",
     "express": "^4.22.2",
-    "request": "^2.88.2",
     "tap": "^21.7.4"
   },
   "bugs": {
