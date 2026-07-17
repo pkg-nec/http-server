@@ -5,175 +5,170 @@ const ecstatic = require('../lib/core');
 const http = require('http');
 const client = require('./lib/http-client');
 const path = require('path');
-const portfinder = require('portfinder');
 
 const root = `${__dirname}/public`;
 const baseDir = 'base';
 
 test('304_not_modified_strong', (t) => {
-  portfinder.getPort((err, port) => {
-    const file = 'a.txt';
+  const file = 'a.txt';
 
-    const server = http.createServer(
-      ecstatic({
-        root,
-        gzip: true,
-        baseDir,
-        autoIndex: true,
-        showDir: true,
-        weakEtags: false,
-        weakCompare: false,
-      })
-    );
+  const server = http.createServer(
+    ecstatic({
+      root,
+      gzip: true,
+      baseDir,
+      autoIndex: true,
+      showDir: true,
+      weakEtags: false,
+      weakCompare: false,
+    })
+  );
 
-    server.listen(port, async () => {
-      const uri = `http://localhost:${port}${path.join('/', baseDir, file)}`;
+  server.listen(async () => {
+    const port = server.address().port;
+    const uri = `http://localhost:${port}${path.join('/', baseDir, file)}`;
 
-      const res = await client.get(uri, { redirect: 'manual' });
-      t.equal(res.statusCode, 200, 'first request should be a 200');
+    const res = await client.get(uri, { redirect: 'manual' });
+    t.equal(res.statusCode, 200, 'first request should be a 200');
 
-      const res2 = await client.get(uri, {
-        redirect: 'manual',
-        headers: { 'if-modified-since': res.headers['last-modified'] },
-      });
-      t.equal(res2.statusCode, 304, 'second request should be a 304');
-      t.equal(res2.headers.etag.indexOf('"'), 0, 'should return a strong etag');
-
-      server.close();
-      setTimeout(() => { t.end(); }, 0);
+    const res2 = await client.get(uri, {
+      redirect: 'manual',
+      headers: { 'if-modified-since': res.headers['last-modified'] },
     });
+    t.equal(res2.statusCode, 304, 'second request should be a 304');
+    t.equal(res2.headers.etag.indexOf('"'), 0, 'should return a strong etag');
+
+    server.close();
+    setTimeout(() => { t.end(); }, 0);
   });
 });
 
 test('304_not_modified_weak', (t) => {
-  portfinder.getPort((err, port) => {
-    const file = 'b.txt';
+  const file = 'b.txt';
 
-    const server = http.createServer(
-      ecstatic({
-        root,
-        gzip: true,
-        baseDir,
-        autoIndex: true,
-        showDir: true,
-        weakCompare: false,
-      })
-    );
+  const server = http.createServer(
+    ecstatic({
+      root,
+      gzip: true,
+      baseDir,
+      autoIndex: true,
+      showDir: true,
+      weakCompare: false,
+    })
+  );
 
-    server.listen(port, async () => {
-      const uri = `http://localhost:${port}${path.join('/', baseDir, file)}`;
-      const now = (new Date()).toString();
+  server.listen(async () => {
+    const port = server.address().port;
+    const uri = `http://localhost:${port}${path.join('/', baseDir, file)}`;
+    const now = (new Date()).toString();
 
-      const res = await client.get(uri, { redirect: 'manual' });
-      t.equal(res.statusCode, 200, 'first request should be a 200');
+    const res = await client.get(uri, { redirect: 'manual' });
+    t.equal(res.statusCode, 200, 'first request should be a 200');
 
-      const res2 = await client.get(uri, {
-        redirect: 'manual',
-        headers: { 'if-modified-since': now },
-      });
-      t.equal(res2.statusCode, 304, 'second request should be a 304');
-      t.equal(res2.headers.etag.indexOf('W/'), 0, 'should return a weak etag');
-
-      server.close();
-      setTimeout(() => { t.end(); }, 0);
+    const res2 = await client.get(uri, {
+      redirect: 'manual',
+      headers: { 'if-modified-since': now },
     });
+    t.equal(res2.statusCode, 304, 'second request should be a 304');
+    t.equal(res2.headers.etag.indexOf('W/'), 0, 'should return a weak etag');
+
+    server.close();
+    setTimeout(() => { t.end(); }, 0);
   });
 });
 
 test('304_not_modified_strong_compare', (t) => {
-  portfinder.getPort((err, port) => {
-    const file = 'b.txt';
+  const file = 'b.txt';
 
-    const server = http.createServer(
-      ecstatic({
-        root,
-        gzip: true,
-        baseDir,
-        autoIndex: true,
-        showDir: true,
-        weakEtags: false,
-        weakCompare: false,
-      })
-    );
+  const server = http.createServer(
+    ecstatic({
+      root,
+      gzip: true,
+      baseDir,
+      autoIndex: true,
+      showDir: true,
+      weakEtags: false,
+      weakCompare: false,
+    })
+  );
 
-    server.listen(port, async () => {
-      const uri = `http://localhost:${port}${path.join('/', baseDir, file)}`;
-      const now = (new Date()).toString();
+  server.listen(async () => {
+    const port = server.address().port;
+    const uri = `http://localhost:${port}${path.join('/', baseDir, file)}`;
+    const now = (new Date()).toString();
 
-      const res = await client.get(uri, { redirect: 'manual' });
-      t.equal(res.statusCode, 200, 'first request should be a 200');
+    const res = await client.get(uri, { redirect: 'manual' });
+    t.equal(res.statusCode, 200, 'first request should be a 200');
 
-      let etag = res.headers.etag;
+    let etag = res.headers.etag;
 
-      const res2 = await client.get(uri, {
-        redirect: 'manual',
-        headers: {
-          'if-modified-since': now,
-          'if-none-match': etag
-        },
-      });
-      t.equal(res2.statusCode, 304, 'second request with a strong etag should be 304');
-
-      const res3 = await client.get(uri, {
-        redirect: 'manual',
-        headers: {
-          'if-modified-since': now,
-          'if-none-match': `W/${etag}`
-        },
-      });
-      t.equal(res3.statusCode, 200, 'third request with a weak etag should be 200');
-
-      server.close();
-      setTimeout(() => { t.end(); }, 0);
+    const res2 = await client.get(uri, {
+      redirect: 'manual',
+      headers: {
+        'if-modified-since': now,
+        'if-none-match': etag
+      },
     });
+    t.equal(res2.statusCode, 304, 'second request with a strong etag should be 304');
+
+    const res3 = await client.get(uri, {
+      redirect: 'manual',
+      headers: {
+        'if-modified-since': now,
+        'if-none-match': `W/${etag}`
+      },
+    });
+    t.equal(res3.statusCode, 200, 'third request with a weak etag should be 200');
+
+    server.close();
+    setTimeout(() => { t.end(); }, 0);
   });
 });
 
 
 test('304_not_modified_weak_compare', (t) => {
-  portfinder.getPort((err, port) => {
-    const file = 'c.js';
+  const file = 'c.js';
 
-    const server = http.createServer(
-      ecstatic({
-        root,
-        gzip: true,
-        baseDir,
-        autoIndex: true,
-        showDir: true,
-        weakEtags: false,
-      })
-    );
+  const server = http.createServer(
+    ecstatic({
+      root,
+      gzip: true,
+      baseDir,
+      autoIndex: true,
+      showDir: true,
+      weakEtags: false,
+    })
+  );
 
-    server.listen(port, async () => {
-      const uri = `http://localhost:${port}${path.join('/', baseDir, file)}`;
-      const now = (new Date()).toString();
+  server.listen(async () => {
+    const port = server.address().port;
+    const uri = `http://localhost:${port}${path.join('/', baseDir, file)}`;
+    const now = (new Date()).toString();
 
-      const res = await client.get(uri, { redirect: 'manual' });
-      t.equal(res.statusCode, 200, 'first request should be a 200');
+    const res = await client.get(uri, { redirect: 'manual' });
+    t.equal(res.statusCode, 200, 'first request should be a 200');
 
-      let etag = res.headers.etag;
+    let etag = res.headers.etag;
 
-      const res2 = await client.get(uri, {
-        redirect: 'manual',
-        headers: {
-          'if-modified-since': now,
-          'if-none-match': etag
-        }
-      });
-      t.equal(res2.statusCode, 304, 'second request with a strong etag should be 304');
-
-      const res3 = await client.get(uri, {
-        redirect: 'manual',
-        headers: {
-          'if-modified-since': now,
-          'if-none-match': `W/${etag}`
-        }
-      });
-      t.equal(res3.statusCode, 304, 'third request with a weak etag should be 304');
-
-      server.close();
-      setTimeout(() => { t.end(); }, 0);
+    const res2 = await client.get(uri, {
+      redirect: 'manual',
+      headers: {
+        'if-modified-since': now,
+        'if-none-match': etag
+      }
     });
+    t.equal(res2.statusCode, 304, 'second request with a strong etag should be 304');
+
+    const res3 = await client.get(uri, {
+      redirect: 'manual',
+      headers: {
+        'if-modified-since': now,
+        'if-none-match': `W/${etag}`
+      }
+    });
+    t.equal(res3.statusCode, 304, 'third request with a weak etag should be 304');
+
+    server.close();
+    setTimeout(() => { t.end(); }, 0);
   });
 });

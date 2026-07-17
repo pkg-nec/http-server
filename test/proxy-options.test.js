@@ -35,12 +35,13 @@ test('proxy options', (t) => {
       gzip: true
     })
     // TODO #723 we should use portfinder
-    server.listen(8080, async () => {
+    server.listen(0, async () => {
+      const port = server.server.address().port;
       try {
 
-        // Another server proxies 8081 to 8080
+        // Another server proxies proxyPort to port
         const proxyServer = httpServer.createServer({
-          proxy: 'http://localhost:8080',
+          proxy: `http://localhost:${port}`,
           root: path.join(__dirname, 'fixtures'),
           tls: true,
           https: httpsOpts,
@@ -50,10 +51,11 @@ test('proxy options', (t) => {
         })
 
         await new Promise((resolve) => {
-          proxyServer.listen(8081, async () => {
+          proxyServer.listen(0, async () => {
+            const proxyPort = proxyServer.server.address().port;
             try {
               // Serve files from proxy root
-              const req1 = client.request('https://localhost:8081/root/file', { rejectUnauthorized: false }).then(async (res) => {
+              const req1 = client.request(`https://localhost:${proxyPort}/root/file`, { rejectUnauthorized: false }).then(async (res) => {
                 t.ok(res)
                 t.equal(res.statusCode, 200)
 
@@ -63,7 +65,7 @@ test('proxy options', (t) => {
               }).catch(err => t.fail(err.toString()))
 
               // Proxy fallback
-              const req2 = client.request('https://localhost:8081/file', { rejectUnauthorized: false }).then(async (res) => {
+              const req2 = client.request(`https://localhost:${proxyPort}/file`, { rejectUnauthorized: false }).then(async (res) => {
                 t.ok(res)
                 t.equal(res.statusCode, 200)
 

@@ -8,8 +8,9 @@ function getRandomInt(min, max) {
   return Math.floor((Math.random() * ((max - min) + 1))) + min;
 }
 
-const sanePort = getRandomInt(1025, 65536);
-const floatingPointPort = 9090.86;
+const sanePort = getRandomInt(1025, 65535);
+const floatingPointPortBase = getRandomInt(1025, 65535);
+const floatingPointPort = floatingPointPortBase + 0.86;
 const insanePorts = [-1, 65537];
 
 async function checkServerIsRunning(url, msg, ps, t) {
@@ -53,7 +54,7 @@ test('sane port', (t) => {
 
 test('floating point port', (t) => {
   t.plan(2);
-  startServer('http://127.0.0.1:9090', floatingPointPort, t);
+  startServer(`http://127.0.0.1:${floatingPointPortBase}`, floatingPointPort, t);
 });
 
 insanePorts.forEach((port) => {
