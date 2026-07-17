@@ -1,16 +1,15 @@
-const request = require('request');
+const client = require('./lib/http-client');
 
 module.exports = (t, server, path, check) => {
-  server.listen(() => {
+  server.listen(async () => {
     const port = server.address().port;
     const uri = `http://localhost:${port}/${path}`;
 
-    request.get({ uri }, (err, res) => {
-      t.error(err);
-      t.equal(res.statusCode, 200);
-      check(t, res.headers);
-    });
+    const res = await client.get(uri);
+    t.equal(res.statusCode, 200);
+    check(t, res.headers);
   });
+
   t.once('end', () => {
     server.close();
   });

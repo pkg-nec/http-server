@@ -8,7 +8,7 @@ const checkHeaders = require('./check-headers.js');
 const root = `${__dirname}/public`;
 
 test('headers object', (t) => {
-  t.plan(4);
+  t.plan(3);
 
   const server = http.createServer(
     ecstatic({
@@ -29,7 +29,7 @@ test('headers object', (t) => {
 });
 
 test('header string', (t) => {
-  t.plan(3);
+  t.plan(2);
 
   const server = http.createServer(
     ecstatic({
@@ -46,7 +46,7 @@ test('header string', (t) => {
 });
 
 test('header array', (t) => {
-  t.plan(3);
+  t.plan(2);
 
   const server = http.createServer(
     ecstatic({
@@ -66,7 +66,7 @@ test('header array', (t) => {
 });
 
 test('H array', (t) => {
-  t.plan(3);
+  t.plan(2);
 
   const server = http.createServer(
     ecstatic({

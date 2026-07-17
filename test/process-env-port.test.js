@@ -1,7 +1,7 @@
 'use strict';
 
 const test = require('tap').test;
-const request = require('request');
+const client = require('./lib/http-client');
 const spawn = require('child_process').spawn;
 
 function getRandomInt(min, max) {
@@ -12,19 +12,20 @@ const sanePort = getRandomInt(1025, 65536);
 const floatingPointPort = 9090.86;
 const insanePorts = [-1, 65537];
 
-function checkServerIsRunning(url, msg, ps, t) {
- if (!msg.toString().match(/Starting up/)) {
+async function checkServerIsRunning(url, msg, ps, t) {
+  if (!msg.toString().match(/Starting up/)) {
     return;
   }
   t.pass('http-server was started');
-  request(url, (err, res) => {
-    if (!err && res.statusCode !== 500) {
-      t.pass('a successful request from the server was made');
-    } else {
-      t.fail('the server could not be reached');
-    }
-    ps.kill('SIGTERM');
-  });
+
+  const res = await client.request(url);
+  if (res.statusCode !== 500) {
+    t.pass('a successful request from the server was made');
+  } else {
+    t.fail('the server could not be reached');
+  }
+
+  ps.kill('SIGTERM');
 }
 
 function startServer(url, port, t) {
@@ -35,8 +36,8 @@ function startServer(url, port, t) {
   });
 
   if (!insanePorts.includes(port)) {
-    ecstatic.stdout.on('data', (msg) => {
-      checkServerIsRunning(url, msg, ecstatic, t);
+    ecstatic.stdout.on('data', async (msg) => {
+      await checkServerIsRunning(url, msg, ecstatic, t);
     });
   } else {
     ecstatic.on('exit', (evt) => {

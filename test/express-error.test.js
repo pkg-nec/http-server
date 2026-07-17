@@ -4,7 +4,7 @@ const test = require('tap').test;
 const ecstatic = require('../lib/core');
 const http = require('http');
 const express = require('express');
-const request = require('request');
+const client = require('./lib/http-client');
 const path = require('path');
 
 const root = `${__dirname}/public`;
@@ -31,18 +31,17 @@ test('express', (t) => {
 
     const server = http.createServer(app);
 
-    server.listen(port, () => {
-      let pending = filenames.length;
-      filenames.forEach((file) => {
-        const uri = `http://localhost:${port}${path.join('/', baseDir, file)}`;
-        const headers = cases[file].headers || {};
+    server.listen(port, async () => {
+      try {
+        for (const file of filenames) {
+          const uri = `http://localhost:${port}${path.join('/', baseDir, file)}`;
+          const headers = cases[file].headers || {};
 
-        request.get({
-          uri,
-          followRedirect: false,
-          headers,
-        }, (err, res, body) => {
-          if (err) t.fail(err);
+          const res = await client.get(uri, {
+            redirect: 'manual',
+            headers: headers
+          })
+
           const r = cases[file];
           t.equal(res.statusCode, r.code, `status code for \`${file}\``);
 
@@ -58,16 +57,15 @@ test('express', (t) => {
           }
 
           if (r.body !== undefined) {
-            t.equal(body, r.body, `body for \`${file}\``);
+            t.equal(res.body, r.body, `body for \`${file}\``);
           }
-
-          pending -= 1;
-          if (pending === 0) {
-            server.close();
-            t.end();
-          }
-        });
-      });
+        }
+      } catch (err) {
+        t.fail(err.toString());
+      } finally {
+        server.close();
+        t.end();
+      }
     });
   });
 });

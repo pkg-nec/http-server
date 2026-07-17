@@ -3,7 +3,7 @@
 const test = require('tap').test;
 const ecstatic = require('../lib/core');
 const http = require('http');
-const request = require('request');
+const client = require('./lib/http-client');
 const path = require('path');
 
 const root = `${__dirname}/public`;
@@ -22,15 +22,14 @@ test('directory listing with query string specified', (t) => {
       })
     );
 
-    server.listen(port, () => {
-      request.get({
-        uri,
-      }, (err, res, body) => {
-        t.match(body, /href="\.\/subdir\/\?a=1&#x26;b=2"/, 'We found the encoded href');
-        t.notMatch(body, /a=1&b=2/, 'We didn\'t find the unencoded query string value');
-        server.close();
-        t.end();
-      });
+    server.listen(port, async () => {
+      const res = await client.get(uri);
+      t.match(res.body, /href="\.\/subdir\/\?a=1&#x26;b=2"/, 'We found the encoded href');
+      t.notMatch(res.body, /a=1&b=2/, 'We didn\'t find the unencoded query string value');
+
+      server.close();
+
+      t.end();
     });
   });
 });

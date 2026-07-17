@@ -1,11 +1,10 @@
 const test = require('tap').test
 const path = require('path')
 const fs = require('fs')
-const request = require('request')
+const client = require('./lib/http-client');
 const httpServer = require('../lib/http-server')
 const promisify = require('util').promisify
 
-const requestAsync = promisify(request)
 const fsReadFile = promisify(fs.readFile)
 
 // Prevent errors from being swallowed
@@ -54,7 +53,7 @@ test('proxy options', (t) => {
           proxyServer.listen(8081, async () => {
             try {
               // Serve files from proxy root
-              await requestAsync('https://localhost:8081/root/file', { rejectUnauthorized: false }).then(async (res) => {
+              const req1 = client.request('https://localhost:8081/root/file', { rejectUnauthorized: false }).then(async (res) => {
                 t.ok(res)
                 t.equal(res.statusCode, 200)
 
@@ -64,7 +63,7 @@ test('proxy options', (t) => {
               }).catch(err => t.fail(err.toString()))
 
               // Proxy fallback
-              await requestAsync('https://localhost:8081/file', { rejectUnauthorized: false }).then(async (res) => {
+              const req2 = client.request('https://localhost:8081/file', { rejectUnauthorized: false }).then(async (res) => {
                 t.ok(res)
                 t.equal(res.statusCode, 200)
 
@@ -72,6 +71,8 @@ test('proxy options', (t) => {
                 const fileData = await fsReadFile(path.join(root, 'file'), 'utf8')
                 t.equal(res.body.trim(), fileData.trim(), 'proxy fallback root file content matches')
               }).catch(err => t.fail(err.toString()))
+
+              await Promise.all([req1, req2])
             } catch (err) {
               t.fail(err.toString())
             } finally {

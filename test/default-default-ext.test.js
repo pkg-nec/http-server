@@ -3,20 +3,21 @@
 const test = require('tap').test;
 const ecstatic = require('../lib/core');
 const http = require('http');
-const request = require('request');
+const client = require('./lib/http-client');
 const eol = require('eol');
 
 test('default defaultExt', (t) => {
-  t.plan(3);
+  t.plan(2);
   const server = http.createServer(ecstatic(`${__dirname}/public/subdir`));
 
-  server.listen(0, () => {
+  server.listen(0, async () => {
     const port = server.address().port;
-    request.get(`http://localhost:${port}`, (err, res, body) => {
-      t.error(err);
-      t.equal(res.statusCode, 200);
-      t.equal(eol.lf(body), 'index!!!\n');
-      server.close(() => { t.end(); });
+    const res = await client.get(`http://localhost:${port}`);
+    t.equal(res.statusCode, 200);
+    t.equal(eol.lf(res.body), 'index!!!\n');
+
+    server.close(() => {
+      t.end();
     });
   });
 });

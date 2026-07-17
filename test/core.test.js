@@ -3,7 +3,7 @@
 const test = require('tap').test;
 const ecstatic = require('../lib/core');
 const http = require('http');
-const request = require('request');
+const client = require('./lib/http-client');
 const path = require('path');
 const eol = require('eol');
 
@@ -30,45 +30,42 @@ test('core', (t) => {
       })
     );
 
-    server.listen(port, () => {
-      let pending = filenames.length;
-      filenames.forEach((file) => {
+    server.listen(port, async () => {
+      const promises = filenames.map(async (file) => {
         const uri = `http://localhost:${port}${path.join('/', baseDir, file)}`;
         const headers = cases[file].headers || {};
 
-        request.get({
-          uri,
-          followRedirect: false,
-          headers,
-        }, (err, res, body) => {
-          if (err) {
-            t.fail(err);
-          }
-          const r = cases[file];
-          t.equal(res.statusCode, r.code, `status code for \`${file}\``);
-
-          if (r.type !== undefined) {
-            t.equal(
-              res.headers['content-type'].split(';')[0], r.type,
-              `content-type for \`${file}\``
-            );
-          }
-
-          if (r.body !== undefined) {
-            t.equal(eol.lf(body), r.body, `body for \`${file}\``);
-          }
-
-          if (r.location !== undefined) {
-            t.equal(path.normalize(res.headers.location), path.join('/', baseDir, r.location), `location for \`${file}\``);
-          }
-
-          pending -= 1;
-          if (pending === 0) {
-            server.close();
-            t.end();
-          }
+        const res = await client.get(uri, {
+          redirect: 'manual',
+          headers: headers,
         });
+
+        const r = cases[file];
+        t.equal(res.statusCode, r.code, `status code for \`${file}\``);
+
+        if (r.type !== undefined) {
+          t.equal(
+            res.headers['content-type'].split(';')[0], r.type,
+            `content-type for \`${file}\``
+          );
+        }
+
+        if (r.body !== undefined) {
+          t.equal(eol.lf(res.body), r.body, `body for \`${file}\``);
+          if (eol.lf(res.body) !== r.body) {
+            console.log(res.body);
+          }
+        }
+
+        if (r.location !== undefined) {
+          t.equal(path.normalize(res.headers.location), path.join('/', baseDir, r.location), `location for \`${file}\``);
+        }
       });
+
+      await Promise.all(promises);
+
+      server.close();
+      t.end();
     });
   });
 });

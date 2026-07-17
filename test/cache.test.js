@@ -2,7 +2,7 @@
 
 const test = require('tap').test;
 const http = require('http');
-const request = require('request');
+const client = require('./lib/http-client');
 const ecstatic = require('../lib/core');
 
 test('custom cache option number', (t) => {
@@ -17,15 +17,15 @@ test('custom cache option number', (t) => {
     t.end();
   }
 
-  t.plan(3);
+  t.plan(2);
 
-  server.listen(0, () => {
+  server.listen(0, async () => {
     const port = server.address().port;
-    request.get(`http://localhost:${port}/a.txt`, (err, res) => {
-      t.error(err);
-      t.equal(res.statusCode, 200, 'a.txt should be found');
-      t.equal(res.headers['cache-control'], 'max-age=3600');
-      server.close(() => { t.end(); });
+    const res = await client.get(`http://localhost:${port}/a.txt`);
+    t.equal(res.statusCode, 200, 'a.txt should be found');
+    t.equal(res.headers['cache-control'], 'max-age=3600');
+    server.close(() => {
+      t.end();
     });
   });
 });
@@ -42,15 +42,15 @@ test('custom cache option string', (t) => {
     t.end();
   }
 
-  t.plan(3);
+  t.plan(2);
 
-  server.listen(0, () => {
+  server.listen(0, async () => {
     const port = server.address().port;
-    request.get(`http://localhost:${port}/a.txt`, (err, res) => {
-      t.error(err);
-      t.equal(res.statusCode, 200, 'a.txt should be found');
-      t.equal(res.headers['cache-control'], 'max-whatever=3600');
-      server.close(() => { t.end(); });
+    const res = await client.get(`http://localhost:${port}/a.txt`);
+    t.equal(res.statusCode, 200, 'a.txt should be found');
+    t.equal(res.headers['cache-control'], 'max-whatever=3600');
+    server.close(() => {
+      t.end();
     });
   });
 });
@@ -71,21 +71,22 @@ test('custom cache option function returning a number', (t) => {
     t.end();
   }
 
-  t.plan(6);
+  t.plan(4);
 
-  server.listen(0, () => {
+  server.listen(0, async () => {
     const port = server.address().port;
-    request.get(`http://localhost:${port}/a.txt`, (err, res) => {
-      t.error(err);
-      t.equal(res.statusCode, 200, 'a.txt should be found');
-      t.equal(res.headers['cache-control'], 'max-age=1');
+    const uri = `http://localhost:${port}/a.txt`;
 
-      request.get(`http://localhost:${port}/a.txt`, (err2, res2) => {
-        t.error(err2);
-        t.equal(res2.statusCode, 200, 'a.txt should be found');
-        t.equal(res2.headers['cache-control'], 'max-age=2');
-        server.close(() => { t.end(); });
-      });
+    const res = await client.get(uri);
+    t.equal(res.statusCode, 200, 'a.txt should be found');
+    t.equal(res.headers['cache-control'], 'max-age=1');
+
+    const res2 = await client.get(uri);
+    t.equal(res2.statusCode, 200, 'a.txt should be found');
+    t.equal(res2.headers['cache-control'], 'max-age=2');
+
+    server.close(() => {
+      t.end();
     });
   });
 });
@@ -106,21 +107,22 @@ test('custom cache option function returning a string', (t) => {
     t.end();
   }
 
-  t.plan(6);
+  t.plan(4);
 
-  server.listen(0, () => {
+  server.listen(0, async () => {
     const port = server.address().port;
-    request.get(`http://localhost:${port}/a.txt`, (err, res) => {
-      t.error(err);
-      t.equal(res.statusCode, 200, 'a.txt should be found');
-      t.equal(res.headers['cache-control'], 'max-meh=1');
+    const uri = `http://localhost:${port}/a.txt`;
 
-      request.get(`http://localhost:${port}/a.txt`, (err2, res2) => {
-        t.error(err2);
-        t.equal(res2.statusCode, 200, 'a.txt should be found');
-        t.equal(res2.headers['cache-control'], 'max-meh=2');
-        server.close(() => { t.end(); });
-      });
+    const res = await client.get(uri);
+    t.equal(res.statusCode, 200, 'a.txt should be found');
+    t.equal(res.headers['cache-control'], 'max-meh=1');
+
+    const res2 = await client.get(uri);
+    t.equal(res2.statusCode, 200, 'a.txt should be found');
+    t.equal(res2.headers['cache-control'], 'max-meh=2');
+
+    server.close(() => {
+      t.end();
     });
   });
 });

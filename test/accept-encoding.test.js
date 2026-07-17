@@ -3,12 +3,12 @@
 const test = require('tap').test;
 const ecstatic = require('../lib/core');
 const http = require('http');
-const request = require('request');
+const client = require('./lib/http-client');
 
 const root = `${__dirname}/public`;
 
 test('properly handles whitespace in accept-encoding', (t) => {
-  t.plan(3);
+  t.plan(2);
 
   const server = http.createServer(ecstatic({
     root,
@@ -16,28 +16,24 @@ test('properly handles whitespace in accept-encoding', (t) => {
     gzip: true
   }));
 
-  server.listen(() => {
+  server.listen(async () => {
     const port = server.address().port;
-    const options = {
-      uri: `http://localhost:${port}/gzip`,
-      headers: {
-        'accept-encoding': ' gzip, deflate'
-      }
-    };
+    const uri = `http://localhost:${port}/gzip`;
 
-    request.get(options, (err, res) => {
-      t.error(err);
-      t.equal(res.statusCode, 200);
-      t.equal(res.headers['content-encoding'], 'gzip');
+    const res = await client.get(uri, {
+      headers: { 'accept-encoding': ' gzip, deflate' }
     });
+    t.equal(res.statusCode, 200);
+    t.equal(res.headers['content-encoding'], 'gzip');
   });
+
   t.once('end', () => {
     server.close();
   });
 });
 
 test('properly handles single accept-encoding entry', (t) => {
-  t.plan(3);
+  t.plan(2);
 
   const server = http.createServer(ecstatic({
     root,
@@ -45,21 +41,17 @@ test('properly handles single accept-encoding entry', (t) => {
     gzip: true
   }));
 
-  server.listen(() => {
+  server.listen(async () => {
     const port = server.address().port;
-    const options = {
-      uri: `http://localhost:${port}/gzip`,
-      headers: {
-        'accept-encoding': 'gzip'
-      }
-    };
+    const uri = `http://localhost:${port}/gzip`;
 
-    request.get(options, (err, res) => {
-      t.error(err);
-      t.equal(res.statusCode, 200);
-      t.equal(res.headers['content-encoding'], 'gzip');
+    const res = await client.get(uri, {
+      headers: { 'accept-encoding': 'gzip' }
     });
+    t.equal(res.statusCode, 200);
+    t.equal(res.headers['content-encoding'], 'gzip');
   });
+
   t.once('end', () => {
     server.close();
   });
