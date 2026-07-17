@@ -41,7 +41,7 @@ Follow these steps to get going.
 1. Now on [pkg-nec/http-server](https://github.com/pkg-nec/http-server), you should see a notification about your recent changes in your fork's branch, with a green button to create a pull request. Click the button.
 1. Describe your changes in detail here, following the template. Once you're satisfied, submit the form.
 1. Be patient while your PR is reviewed. This can take a while. We may request changes, but don't be afraid to question them.
-1. Your PR might become conflicted with the code in `master`. If this is the case, you will need to [update your PR](#up-to-date) and resolve your conflicts.
+1. Your PR might become conflicted with the code in `main`. If this is the case, you will need to [update your PR](#up-to-date) and resolve your conflicts.
 1. You don't need to make a new PR to any needed changes. Instead, commit on top of your changes, and push these to your fork's branch. The PR will be updated, and CI will re-run.
    - **Please do not rebase and force-push**, it ruins the git history
 
