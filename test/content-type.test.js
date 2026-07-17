@@ -19,7 +19,7 @@ test('global default contentType', (t) => {
     t.end();
   }
 
-  t.plan(3);
+  t.plan(2);
 
   
   checkHeaders(t, server, 'f_f', (t, headers) => {
@@ -28,7 +28,7 @@ test('global default contentType', (t) => {
 });
 
 test('content type text', (t) => {
-  t.plan(3);
+  t.plan(2);
 
   const server = http.createServer(
     ecstatic({root})
@@ -40,7 +40,7 @@ test('content type text', (t) => {
 });
 
 test('content type binary', (t) => {
-  t.plan(3);
+  t.plan(2);
 
   const server = http.createServer(
     ecstatic({root})
@@ -52,7 +52,7 @@ test('content type binary', (t) => {
 });
 
 test('charset arabic', (t) => {
-  t.plan(3);
+  t.plan(2);
 
   const server = http.createServer(
     ecstatic({root})
@@ -66,7 +66,7 @@ test('charset arabic', (t) => {
 });
 
 test('charset Shift_JIS', (t) => {
-  t.plan(3);
+  t.plan(2);
 
   const server = http.createServer(
     ecstatic({root})

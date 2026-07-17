@@ -3,7 +3,7 @@
 const tap = require('tap');
 const ecstatic = require('../lib/core');
 const http = require('http');
-const request = require('request');
+const client = require('./lib/http-client');
 const path = require('path');
 const portfinder = require('portfinder');
 
@@ -36,15 +36,17 @@ test('directory listing with pathname including HTML characters', (t) => {
       })
     );
 
-    server.listen(port, () => {
-      request.get({
-        uri,
-      }, (err, res, body) => {
-        t.notMatch(body, /<dir>/, 'We didn\'t find the unencoded pathname');
-        t.match(body, /&#x3C;dir&#x3E;/, 'We found the encoded pathname');
+    server.listen(port, async () => {
+      try {
+        const res = await client.get(uri);
+        t.notMatch(res.body, /<dir>/, 'We didn\'t find the unencoded pathname');
+        t.match(res.body, /&#x3C;dir&#x3E;/, 'We found the encoded pathname');
+      } catch (e) {
+        t.fail(e.toString());
+      } finally {
         server.close();
         t.end();
-      });
+      }
     });
   });
 });
@@ -59,17 +61,18 @@ test('NULL byte in request path does not crash server', (t) => {
       })
     );
 
-    try {
-    server.listen(port, () => {
-      request.get({uri}, (err, res, body) => {
-        t.pass('server did not crash')
+    server.listen(port, async () => {
+      try {
+        const res = await client.get(uri);
+        // Server responded (did not crash) — any status code is acceptable
+        t.pass('server did not crash');
+      } catch (err) {
+        t.fail(err.toString());
+      } finally {
         server.close();
         t.end();
-      });
+      }
     });
-    } catch (err) {
-      t.fail(err.toString());
-    }
   });
 });
 

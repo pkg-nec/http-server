@@ -3,7 +3,7 @@
 const test = require('tap').test;
 const ecstatic = require('../lib/core');
 const http = require('http');
-const request = require('request');
+const client = require('./lib/http-client');
 const path = require('path');
 
 const root = `${__dirname}/public`;
@@ -28,45 +28,39 @@ test('core', (t) => {
       })
     );
 
-    server.listen(port, () => {
-      let pending = filenames.length;
-      filenames.forEach((file) => {
+    server.listen(port, async () => {
+      const promises = filenames.map(async (file) => {
         const uri = `http://localhost:${port}${path.join('/', baseDir, file)}`;
         const headers = cases[file].headers || {};
 
-        request.get({
-          uri,
-          followRedirect: false,
-          headers,
-        }, (err, res, body) => {
-          if (err) {
-            t.fail(err);
-          }
-          const r = cases[file];
-          t.equal(res.statusCode, r.code, `status code for \`${file}\``);
+        const res = await client.get(uri, {
+          redirect: 'manual',
+          headers: headers,
+        });
 
-          if (r.type !== undefined) {
-            t.equal(
+        const r = cases[file];
+        t.equal(res.statusCode, r.code, `status code for \`${file}\``);
+
+        if (r.type !== undefined) {
+          t.equal(
               res.headers['content-type'].split(';')[0], r.type,
               `content-type for \`${file}\``
-            );
-          }
+          );
+        }
 
-          if (r.body !== undefined) {
-            t.equal(body, r.body, `body for \`${file}\``);
-          }
+        if (r.body !== undefined) {
+          t.equal(res.body, r.body, `body for \`${file}\``);
+        }
 
-          if (r.location !== undefined) {
-            t.equal(res.headers.location, path.join('/', baseDir, r.location), `location for \`${file}\``);
-          }
-
-          pending -= 1;
-          if (pending === 0) {
-            server.close();
-            t.end();
-          }
-        });
+        if (r.location !== undefined) {
+          t.equal(res.headers.location, path.join('/', baseDir, r.location), `location for \`${file}\``);
+        }
       });
+
+      await Promise.all(promises);
+
+      server.close();
+      t.end();
     });
   });
 });

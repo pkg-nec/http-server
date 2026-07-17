@@ -1,11 +1,10 @@
 const test = require('tap').test;
 const path = require('path');
 const fs = require('fs');
-const request = require('request');
+const client = require('./lib/http-client');
 const httpServer = require('../lib/http-server');
 const promisify = require('util').promisify;
 
-const requestAsync = promisify(request);
 const fsReadFile = promisify(fs.readFile);
 
 // Prevent errors from being swallowed
@@ -39,7 +38,7 @@ test('http-server main', (t) => {
           // can run on the event loop at their own leisure
           await Promise.all([
             // request file from root
-            requestAsync("http://localhost:8080/file").then(async (res) => {
+            client.request("http://localhost:8080/file").then(async (res) => {
               // files should be served from the root
               t.equal(res.statusCode, 200);
 
@@ -48,13 +47,13 @@ test('http-server main', (t) => {
             }).catch(err => t.fail(err.toString())),
 
             // Request non-existent file
-            requestAsync("http://localhost:8080/404").then(res => {
+            client.request("http://localhost:8080/404").then(res => {
               t.ok(res);
               t.equal(res.statusCode, 404);
             }).catch(err => t.fail(err.toString())),
 
             // Request root
-            requestAsync("http://localhost:8080/").then(res => {
+            client.request("http://localhost:8080/").then(res => {
               t.ok(res);
               t.equal(res.statusCode, 200);
               t.match(res.body, './file');
@@ -66,13 +65,12 @@ test('http-server main', (t) => {
             }).catch(err => t.fail(err.toString())),
 
             // Get robots
-            requestAsync("http://localhost:8080/robots.txt").then(res => {
+            client.request("http://localhost:8080/robots.txt").then(res => {
               t.equal(res.statusCode, 200);
             }).catch(err => t.fail(err.toString())),
 
             // CORS time
-            requestAsync({
-              uri: 'http://localhost:8080',
+            client.request("http://localhost:8080", {
               method: 'OPTIONS',
               headers: {
                 'Access-Control-Request-Method': 'GET',
@@ -91,9 +89,7 @@ test('http-server main', (t) => {
               "Regression: don't crash on control characters in query strings",
               {},
               (t) => {
-                requestAsync({
-                  uri: encodeURI('http://localhost:8080/file?\x0cfoo'),
-                }).then(res => {
+                client.request(encodeURI('http://localhost:8080/file?\x0cfoo')).then(res => {
                   t.equal(res.statusCode, 200);
                 }).catch(err => t.fail(err.toString()))
                   .finally(() => t.end());
@@ -102,8 +98,7 @@ test('http-server main', (t) => {
 
             // Light compression testing. Heavier compression tests exist in
             // compression.test.js
-            requestAsync({
-              uri: 'http://localhost:8080/compression/',
+            client.request("http://localhost:8080/compression/", {
               headers: {
                 'accept-encoding': 'gzip'
               }
@@ -112,8 +107,7 @@ test('http-server main', (t) => {
               t.equal(res.headers['content-encoding'], 'gzip');
             }).catch(err => t.fail(err.toString())),
 
-            requestAsync({
-              uri: 'http://localhost:8080/compression/',
+            client.request("http://localhost:8080/compression/", {
               headers: {
                 'accept-encoding': 'gzip, br'
               }
@@ -122,7 +116,7 @@ test('http-server main', (t) => {
               t.equal(res.headers['content-encoding'], 'br');
             }).catch(err => t.fail(err.toString())),
 
-            requestAsync("http://localhost:8080/htmlButNot").then(res => {
+            client.request("http://localhost:8080/htmlButNot").then(res => {
               t.equal(res.statusCode, 200);
               t.match(res.headers['content-type'], /^text\/html/);
             }).catch(err => t.fail(err.toString()))
@@ -138,7 +132,7 @@ test('http-server main', (t) => {
             proxyServer.listen(8081, async () => {
               try {
                 // Serve files from proxy root
-                await requestAsync("http://localhost:8081/root/file").then(async (res) => {
+                await client.request("http://localhost:8081/root/file").then(async (res) => {
                   t.ok(res);
                   t.equal(res.statusCode, 200);
 
@@ -148,7 +142,7 @@ test('http-server main', (t) => {
                 }).catch(err => t.fail(err.toString()));
 
                 // Proxy fallback
-                await requestAsync("http://localhost:8081/file").then(async (res) => {
+                await client.request("http://localhost:8081/file").then(async (res) => {
                   t.ok(res);
                   t.equal(res.statusCode, 200);
 
@@ -184,16 +178,16 @@ test('http-server main', (t) => {
         try {
           await Promise.all([
             // Bad request with no auth
-            requestAsync("http://localhost:8082/file").then((res) => {
+            client.request("http://localhost:8082/file").then((res) => {
               t.equal(res.statusCode, 401);
               t.equal(res.body, 'Access denied', 'Bad auth returns expected body');
             }).catch(err => t.fail(err.toString())),
 
             // bad user
-            requestAsync("http://localhost:8082/file", {
+            client.request("http://localhost:8082/file", {
               auth: {
-                user: 'wrong_username',
-                pass: 'correct_password'
+                username: 'wrong_username',
+                password: 'correct_password'
               }
             }).then((res) => {
               t.equal(res.statusCode, 401);
@@ -201,10 +195,10 @@ test('http-server main', (t) => {
             }).catch(err => t.fail(err.toString())),
 
             // bad password
-            requestAsync("http://localhost:8082/file", {
+            client.request("http://localhost:8082/file", {
               auth: {
-                user: 'correct_username',
-                pass: 'wrong_password'
+                username: 'correct_username',
+                password: 'wrong_password'
               }
             }).then((res) => {
               t.equal(res.statusCode, 401);
@@ -212,10 +206,10 @@ test('http-server main', (t) => {
             }).catch(err => t.fail(err.toString())),
 
             // nonexistant file, and bad auth
-            requestAsync("http://localhost:8082/404", {
+            client.request("http://localhost:8082/404", {
               auth: {
-                user: 'correct_username',
-                pass: 'wrong_password'
+                username: 'correct_username',
+                password: 'wrong_password'
               }
             }).then((res) => {
               t.equal(res.statusCode, 401);
@@ -223,10 +217,10 @@ test('http-server main', (t) => {
             }).catch(err => t.fail(err.toString())),
 
             // good path, good auth
-            requestAsync("http://localhost:8082/file", {
+            client.request("http://localhost:8082/file", {
               auth: {
-                user: 'correct_username',
-                pass: 'correct_password'
+                username: 'correct_username',
+                password: 'correct_password'
               }
             }).then(async (res) => {
               t.equal(res.statusCode, 200);
@@ -254,16 +248,16 @@ test('http-server main', (t) => {
         try {
           await Promise.all([
             // regression test
-            requestAsync("http://localhost:8083/file").then(res => {
+            client.request("http://localhost:8083/file").then(res => {
               t.equal(res.statusCode, 401);
               t.equal(res.body, 'Access denied', 'Bad auth returns expected body');
             }).catch(err => t.fail(err.toString())),
 
             // regression test, bad username
-            requestAsync("http://localhost:8083/file", {
+            client.request("http://localhost:8083/file", {
               auth: {
-                user: 'wrong_username',
-                pass: '123456'
+                username: 'wrong_username',
+                password: '123456'
               }
             }).then(res => {
               t.equal(res.statusCode, 401);
@@ -272,10 +266,10 @@ test('http-server main', (t) => {
 
             // regression test, correct auth, even though the password is a
             // different type.
-            requestAsync("http://localhost:8083/file", {
+            client.request("http://localhost:8083/file", {
               auth: {
-                user: 'correct_username',
-                pass: '123456'
+                username: 'correct_username',
+                password: '123456'
               }
             }).then(async (res) => {
               t.equal(res.statusCode, 200);

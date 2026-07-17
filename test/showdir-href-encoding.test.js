@@ -3,7 +3,7 @@
 const test = require('tap').test;
 const ecstatic = require('../lib/core');
 const http = require('http');
-const request = require('request');
+const client = require('./lib/http-client');
 const path = require('path');
 
 const root = `${__dirname}/public`;
@@ -22,14 +22,13 @@ test('url encoding in href', (t) => {
       })
     );
 
-    server.listen(port, () => {
-      request.get({
-        uri,
-      }, (err, res, body) => {
-        t.match(body, /href="\.\/aname%2Baplus.txt"/, 'We found the right href');
-        server.close();
-        t.end();
-      });
+    server.listen(port, async () => {
+      const res = await client.get(uri);
+      t.match(res.body, /href="\.\/aname%2Baplus.txt"/, 'We found the right href');
+
+      server.close();
+
+      t.end();
     });
   });
 });

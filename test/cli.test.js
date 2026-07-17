@@ -3,7 +3,7 @@
 /* this test suit is incomplete  2015-12-18 */
 
 const test = require('tap').test;
-const request = require('request');
+const client = require('./lib/http-client');
 const spawn = require('child_process').spawn;
 const path = require('path');
 const portfinder = require('portfinder');
@@ -15,22 +15,26 @@ function startServer(args) {
   return spawn(node, [require.resolve('../bin/http-server')].concat(args));
 }
 
-function checkServerIsRunning(url, msg, t, _cb) {
+async function checkServerIsRunning(url, msg, t, _cb) {
   if (!msg.toString().match(/Starting up/)) {
     return;
   }
   t.pass('http-server started');
   const cb = _cb || (() => {});
 
-  request(url, (err, res) => {
-    if (!err && res.statusCode !== 500) {
+  try {
+    const res = await client.get(url);
+    if (res.statusCode !== 500) {
       t.pass('a successful request from the server was made');
       cb(null, res);
     } else {
       t.fail(`the server could not be reached @ ${url}`);
-      cb(err);
+      cb(new Error(`Server returned status ${res.statusCode}`));
     }
-  });
+  } catch (err) {
+    t.fail(`the server could not be reached @ ${url}`);
+    cb(err);
+  }
 }
 
 function tearDown(ps, t) {
