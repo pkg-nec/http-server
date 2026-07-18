@@ -1,21 +1,35 @@
 {
   "name": "@pkg-nec/http-server",
   "version": "14.3.0",
-  "description": "A simple zero-configuration command-line http server",
+  "description": "Maintained security fork of http-server — zero-config static HTTP/HTTPS server for Node.js",
   "main": "./lib/http-server",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pkg-nec/http-server.git"
   },
   "keywords": [
-    "cli",
-    "command",
-    "static",
-    "http",
-    "https",
     "http-server",
     "https-server",
-    "server"
+    "http",
+    "https",
+    "server",
+    "static",
+    "static-server",
+    "static-site",
+    "web-server",
+    "file-server",
+    "cli",
+    "cli-tool",
+    "command-line",
+    "npx",
+    "zero-config",
+    "local-development",
+    "devtools",
+    "cors",
+    "proxy",
+    "nodejs",
+    "security",
+    "maintained-fork"
   ],
   "scripts": {
     "start": "node ./bin/http-server",
@@ -30,6 +44,14 @@
   "man": "./doc/http-server.1",
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+  },
+  "author": {
+    "name": "pkg-nec",
+    "url": "https://github.com/pkg-nec"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://buymeacoffee.com/maw629"
   },
   "contributors": [
     {
