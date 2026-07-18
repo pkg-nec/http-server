@@ -1,6 +1,8 @@
 [![GitHub Workflow Status (main)](https://img.shields.io/github/actions/workflow/status/pkg-nec/http-server/node.js.yml?branch=main&style=flat-square)](https://github.com/pkg-nec/http-server/actions)
 [![npm](https://img.shields.io/npm/v/@pkg-nec/http-server.svg?style=flat-square)](https://www.npmjs.com/package/@pkg-nec/http-server) [![npm downloads](https://img.shields.io/npm/dm/@pkg-nec/http-server?color=blue&label=npm%20downloads&style=flat-square)](https://www.npmjs.com/package/@pkg-nec/http-server)
+[![npm provenance](https://img.shields.io/badge/npm-provenance-green?style=flat-square)](https://www.npmjs.com/package/@pkg-nec/http-server)
 [![license](https://img.shields.io/github/license/pkg-nec/http-server.svg?style=flat-square)](https://github.com/pkg-nec/http-server)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-yellow?style=flat-square&logo=buy-me-a-coffee)](https://buymeacoffee.com/maw629)
 
 > **Maintained fork.** This is `@pkg-nec/http-server`, a maintained fork of [`http-party/http-server`](https://github.com/http-party/http-server), which has been effectively unmaintained since early 2022. This fork ships vulnerability patches only — no new features. Report issues at [pkg-nec/http-server/issues](https://github.com/pkg-nec/http-server/issues).
 
