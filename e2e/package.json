@@ -1,0 +1,23 @@
+{
+  "name": "http-server-e2e",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "tap": "^21.7.4"
+  },
+  "dependencies": {
+    "@pkg-nec/http-server": "14.1.2"
+  }
+}
