@@ -8,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "tap test/spawn-utils.test.js --disable-coverage"
+    "test": "tap test/*.test.js"
   },
   "keywords": [],
   "author": "",
