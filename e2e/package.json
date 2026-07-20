@@ -8,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tap test/spawn-utils.test.js --disable-coverage"
   },
   "keywords": [],
   "author": "",
@@ -19,5 +19,8 @@
   },
   "dependencies": {
     "@pkg-nec/http-server": "14.1.2"
+  },
+  "tap": {
+    "disable-coverage": true
   }
 }
