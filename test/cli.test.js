@@ -44,7 +44,9 @@ function tearDown(ps, t) {
 }
 
 const getPort = () => new Promise((resolve, reject) => {
-  portfinder.getPort((err, port) => {
+  // Use a random starting port to prevent conflict between tests
+  const basePort = 10000 + Math.floor(Math.random() * 50000);
+  portfinder.getPort({ port: basePort }, (err, port) => {
     if (err) reject(err);
     resolve(port);
   });

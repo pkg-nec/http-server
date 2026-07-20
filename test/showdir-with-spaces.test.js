@@ -10,25 +10,23 @@ const root = `${__dirname}/public`;
 const baseDir = 'base';
 
 test('directory listing when directory name contains spaces', (t) => {
-  require('portfinder').getPort((err, port) => {
+  const server = http.createServer(
+    ecstatic({
+      root,
+      baseDir,
+      showDir: true,
+      autoIndex: false,
+    })
+  );
+
+  server.listen(async () => {
+    const port = server.address().port;
     const uri = `http://localhost:${port}${path.join('/', baseDir, 'subdir_with%20space')}`;
+    const res = await client.get(uri);
+    t.ok(/href="\.\/index.html"/.test(res.body), 'We found the right href');
 
-    const server = http.createServer(
-      ecstatic({
-        root,
-        baseDir,
-        showDir: true,
-        autoIndex: false,
-      })
-    );
+    server.close();
 
-    server.listen(port, async () => {
-      const res = await client.get(uri);
-      t.ok(/href="\.\/index.html"/.test(res.body), 'We found the right href');
-
-      server.close();
-
-      t.end();
-    });
+    t.end();
   });
 });

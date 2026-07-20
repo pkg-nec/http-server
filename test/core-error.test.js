@@ -14,53 +14,52 @@ require('fs').mkdirSync(`${root}/emptyDir`, {recursive: true});
 const cases = require('./fixtures/common-cases-error');
 
 test('core', (t) => {
-  require('portfinder').getPort((err, port) => {
-    const filenames = Object.keys(cases);
+  const filenames = Object.keys(cases);
 
-    const server = http.createServer(
-      ecstatic({
-        root,
-        gzip: true,
-        baseDir,
-        autoIndex: true,
-        showDir: true,
-        handleError: false,
-      })
-    );
+  const server = http.createServer(
+    ecstatic({
+      root,
+      gzip: true,
+      baseDir,
+      autoIndex: true,
+      showDir: true,
+      handleError: false,
+    })
+  );
 
-    server.listen(port, async () => {
-      const promises = filenames.map(async (file) => {
-        const uri = `http://localhost:${port}${path.join('/', baseDir, file)}`;
-        const headers = cases[file].headers || {};
+  server.listen(async () => {
+    const port = server.address().port;
+    const promises = filenames.map(async (file) => {
+      const uri = `http://localhost:${port}${path.join('/', baseDir, file)}`;
+      const headers = cases[file].headers || {};
 
-        const res = await client.get(uri, {
-          redirect: 'manual',
-          headers: headers,
-        });
-
-        const r = cases[file];
-        t.equal(res.statusCode, r.code, `status code for \`${file}\``);
-
-        if (r.type !== undefined) {
-          t.equal(
-              res.headers['content-type'].split(';')[0], r.type,
-              `content-type for \`${file}\``
-          );
-        }
-
-        if (r.body !== undefined) {
-          t.equal(res.body, r.body, `body for \`${file}\``);
-        }
-
-        if (r.location !== undefined) {
-          t.equal(res.headers.location, path.join('/', baseDir, r.location), `location for \`${file}\``);
-        }
+      const res = await client.get(uri, {
+        redirect: 'manual',
+        headers: headers,
       });
 
-      await Promise.all(promises);
+      const r = cases[file];
+      t.equal(res.statusCode, r.code, `status code for \`${file}\``);
 
-      server.close();
-      t.end();
+      if (r.type !== undefined) {
+        t.equal(
+            res.headers['content-type'].split(';')[0], r.type,
+            `content-type for \`${file}\``
+        );
+      }
+
+      if (r.body !== undefined) {
+        t.equal(res.body, r.body, `body for \`${file}\``);
+      }
+
+      if (r.location !== undefined) {
+        t.equal(res.headers.location, path.join('/', baseDir, r.location), `location for \`${file}\``);
+      }
     });
+
+    await Promise.all(promises);
+
+    server.close();
+    t.end();
   });
 });
