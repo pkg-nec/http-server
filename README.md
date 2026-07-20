@@ -1,4 +1,5 @@
 [![GitHub Workflow Status (main)](https://img.shields.io/github/actions/workflow/status/pkg-nec/http-server/node.js.yml?branch=main&style=flat-square)](https://github.com/pkg-nec/http-server/actions)
+[![E2E Tests](https://img.shields.io/github/actions/workflow/status/pkg-nec/http-server/e2e.yml?branch=main&label=E2E%20Tests&style=flat-square)](https://github.com/pkg-nec/http-server/actions)
 [![npm](https://img.shields.io/npm/v/@pkg-nec/http-server.svg?style=flat-square)](https://www.npmjs.com/package/@pkg-nec/http-server) [![npm downloads](https://img.shields.io/npm/dm/@pkg-nec/http-server?color=blue&label=npm%20downloads&style=flat-square)](https://www.npmjs.com/package/@pkg-nec/http-server)
 [![npm provenance](https://img.shields.io/badge/npm-provenance-green?style=flat-square)](https://www.npmjs.com/package/@pkg-nec/http-server)
 [![license](https://img.shields.io/github/license/pkg-nec/http-server.svg?style=flat-square)](https://github.com/pkg-nec/http-server)
@@ -147,3 +148,10 @@ $ npm start
 
 You should see the turtle image in the screenshot above hosted at that URL. See
 the `./public` folder for demo content.
+
+## Testing & Quality
+
+This project maintains high reliability through a rigorous, two-tier testing strategy:
+
+1. **Core Unit Tests:** Comprehensive tests covering internal logic, API surfaces, and command-line parsing.
+2. **End-to-End (E2E) Tests:** A dedicated E2E suite (`/e2e`) that simulates real-world consumer usage. It acts as an external integration layer, verifying that the module installs and operates flawlessly in consumer environments.
