@@ -18,7 +18,7 @@
     "tap": "^21.7.4"
   },
   "dependencies": {
-    "@pkg-nec/http-server": "14.3.0"
+    "@pkg-nec/http-server": "14.3.1"
   },
   "tap": {
     "disable-coverage": true
