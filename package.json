@@ -1,6 +1,6 @@
 {
   "name": "@pkg-nec/http-server",
-  "version": "14.3.1",
+  "version": "14.3.2",
   "description": "Maintained security fork of http-server — zero-config static HTTP/HTTPS server for Node.js",
   "main": "./lib/http-server",
   "repository": {
