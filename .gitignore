@@ -7,3 +7,5 @@ npm-debug.log*
 .idea/
 
 .tap/
+
+e2e/fixtures/tmp/
