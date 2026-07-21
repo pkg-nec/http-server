@@ -1,4 +1,3 @@
-// http-server-e2e/test/spawn-utils.js
 const { spawn } = require('node:child_process');
 const net = require('node:net');
 
