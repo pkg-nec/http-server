@@ -27,8 +27,8 @@ To run the test suite locally against a specific upstream version:
 
 ```bash
 # 1. Clone the repository
-git clone <repo-url>
-cd http-server-e2e
+git clone https://github.com/pkg-nec/http-server.git
+cd http-server/e2e
 
 # 2. Install a target version of the server
 npm install @pkg-nec/http-server@14.3.1
