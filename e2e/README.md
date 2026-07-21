@@ -6,7 +6,7 @@ An independent, rigorous E2E test suite for `@pkg-nec/http-server`.
 
 ## Version Verification Log
 
-### v14.3.1 & v14.3.0
+### v14.3.2, v14.3.1 & v14.3.0
 * **Status:** Verified Stable.
 * **Details:** All core E2E tests pass flawlessly with no regressions detected.
 
