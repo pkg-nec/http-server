@@ -17,6 +17,12 @@ on:
     #        │ │ │ │ │
     - cron: "3 4 * * 2"
   workflow_dispatch:
+    inputs:
+      publish_results:
+        description: "Set to true to publish results. Only works when run from the default branch."
+        required: false
+        type: boolean
+        default: true
 
 concurrency:
   group: "${{ github.workflow }}-${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
