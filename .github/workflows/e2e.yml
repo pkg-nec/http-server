@@ -35,6 +35,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
+      - name: Install Root Dependencies
+        run: npm ci --ignore-scripts
+
       - name: Install E2E Dependencies
         working-directory: ./e2e
         run: npm ci --ignore-scripts
