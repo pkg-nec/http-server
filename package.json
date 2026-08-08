@@ -124,7 +124,7 @@
   "devDependencies": {
     "eol": "^0.10.0",
     "express": "^4.22.2",
-    "tap": "^21.7.4"
+    "tap": "^21.7.5"
   },
   "bugs": {
     "url": "https://github.com/pkg-nec/http-server/issues"
