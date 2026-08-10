@@ -15,7 +15,7 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "tap": "^21.7.4"
+    "tap": "^21.7.5"
   },
   "dependencies": {
     "@pkg-nec/http-server": "file:.."
